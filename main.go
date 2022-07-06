@@ -1,21 +1,25 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"bubble/dao"
+	"bubble/models"
+	"bubble/routers"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func main() {
-	//创建默认的路由引擎
-	r := gin.Default()
-	//告诉gin框架模版文件引用的静态文件
-	r.Static("/static", "static")
-	// 告诉gin框架去哪里找模版文件
-	r.LoadHTMLGlob("templates/*")
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
-	})
-	//测试
-	r.Run(":8080")
+	//创建数据库
+	// sql:create database bubble;
+	// 连接数据库
+	err := dao.InitMySQL()
+	if err != nil {
+		panic(err)
+	}
+	defer dao.Close()
+	// 自动迁移 模型绑定
+	dao.DB.AutoMigrate(&models.Todo{})
+
+	r := routers.SetupRouter()
+	r.Run()
 
 }
