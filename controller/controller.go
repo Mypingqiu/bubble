@@ -29,22 +29,53 @@ func CreateATodo(c *gin.Context) {
 
 }
 
-func CetTodoList(c *gin.Context) {
-	//todo := &Todo{}
-	//todoList := DB.Find(&todo)
-	//c.JSON(200, gin.H{
-	//	"message": todoList,
-	//})
+func GetTodoList(c *gin.Context) {
+	err, todolist := models.GetTodoList()
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"error": err,
+		})
+	} else {
+		c.JSON(http.StatusOK, todolist)
+	}
 }
 
 func UpdateATodo(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "put todo:id",
-	})
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"error": "无效的id"})
+		return
+	}
+	err, todo := models.GetATodo(id)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"error": err,
+		})
+	}
+	c.BindJSON(&todo)
+
+	err2 := models.UpdateATodo(todo)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"error": err2.Error(),
+		})
+	} else {
+		c.JSON(http.StatusOK, todo)
+	}
 }
 
 func DeleteATodo(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "delete todo:id",
-	})
+	id, ok := c.Params.Get("id")
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{"error": "无效的id"})
+		return
+	}
+	err := models.DeleteATodo(id)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"error": err.Error(),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{id: "deleted"})
+	}
 }
