@@ -1,7 +1,6 @@
 # bubble
 > gin框架记事本
-
-Github地址：[https://github.com/Q1mi/bubble](https://github.com/Q1mi/bubble)
+> 参考地址：[https://github.com/Q1mi/bubble](https://github.com/Q1mi/bubble)
 
 - grom\gin框架
 
